@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./style/common.scss";
 import MainTool from "./components/MainTool";
 import Ability from "./components/Main/Ability";
+import Ground from "./components/Main/Ground";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
 
         <main className="main">
           <Ability />
+          <Ground />
         </main>
       </div>
     </div>
