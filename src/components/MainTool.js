@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { GrSplit, GrSplits } from "react-icons/gr";
 import { MdOutlineSplitscreen } from "react-icons/md";
 import { BsArrowsFullscreen, BsRecord } from "react-icons/bs";
@@ -8,12 +8,22 @@ import { AiOutlineCamera, AiOutlinePlus } from "react-icons/ai";
 import "../style/MainTool.scss";
 
 const MainTool = () => {
+  const [subActive, setSubActive] = useState(false);
+  const [subIndex, setSubIndex] = useState("");
   const toolList = [
-    { id: 0, title: "File" },
-    { id: 1, title: "Edit" },
-    { id: 2, title: "Browser" },
-    { id: 3, title: "View" },
-    { id: 4, title: "Window" },
+    { id: 0, title: "File", sub: ["New", "Add File", "Save", "Save as"] },
+    { id: 1, title: "Edit", sub: ["Cut", "Copy", "Paste", "Delete"] },
+    { id: 2, title: "Browser", sub: ["Minimize", "Open Editor"] },
+    {
+      id: 3,
+      title: "View",
+      sub: ["Show Library", "Show Tool Bar", "Enter Full Screen"],
+    },
+    {
+      id: 4,
+      title: "Window",
+      sub: ["Open Controls", "Open Event List", "Show Mixer"],
+    },
   ];
 
   const menuList = [
@@ -31,35 +41,39 @@ const MainTool = () => {
       { id: 2, title: <BiExport /> },
     ],
   ];
+  const subClickHandler = (e, id) => {
+    setSubIndex(id);
+    setSubActive(true);
+
+    document.addEventListener("click", (e) => {
+      if (e.target.className !== "gnb-btn active") {
+        setSubActive(false);
+        setSubIndex("");
+      }
+    });
+  };
+
   return (
     <div className="main-tool-wrap">
       <ul className="gnb">
         {toolList.map((list, index) => (
-          <li key={list.id}>{list.title}</li>
+          <li
+            className={subIndex === index ? "gnb-btn active" : "gnb-btn"}
+            key={list.id}
+            onClick={(e) => subClickHandler(e, list.id)}
+          >
+            {list.title}
+
+            {subActive && subIndex === index ? (
+              <ul className="gnb-sub">
+                {list.sub.map((sub, index) => (
+                  <li key={index}>{sub}</li>
+                ))}
+              </ul>
+            ) : null}
+          </li>
         ))}
       </ul>
-      <div className="menu">
-        <ul className="left-menu">
-          {menuList[0].map((list, index) => (
-            <li key={list.id}>{list.title}</li>
-          ))}
-        </ul>
-        <ul className="middle-menu">
-          <li>0:01:025</li>
-          <li>0:21:131</li>
-          <li>
-            <BsRecord />
-          </li>
-          <li>
-            <AiOutlinePlus />
-          </li>
-        </ul>
-        <ul className="right-menu">
-          {menuList[1].map((list, index) => (
-            <li key={list.id}>{list.title}</li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 };
