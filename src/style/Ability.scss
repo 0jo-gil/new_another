@@ -100,6 +100,20 @@
 
         li {
           margin: 10px 0;
+          position: relative;
+
+          input{
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+
+          }
+
+          label{
+            cursor: pointer;
+          }
         }
       }
     }

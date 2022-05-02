@@ -207,6 +207,10 @@ const Space = ({ setObject }) => {
 
 const Ground = () => {
   const [object, setObject] = useState(null);
+  const [importModal, setImportModal] = useState(false);
+  // const [isData, setData] = useState(data);
+  const [dataIndex, setDataIndex] = useState(0);
+  const [listIndex, setListIndex] = useState(0);
   const sceneBtn = [
     [
       { id: 0, title: <GrSplit /> },
@@ -267,7 +271,15 @@ const Ground = () => {
           clearInterval(captureAni);
         }
       }, 500);
+    } else if (id === 1) {
+      setImportModal(!importModal);
+      setListIndex(id);
     }
+  };
+
+  const dataClickHandler = (id) => {
+    setDataIndex(id);
+    console.log(dataIndex);
   };
   return (
     <div className="ground-wrap">
@@ -291,6 +303,22 @@ const Ground = () => {
           {sceneBtn[1].map((list, index) => (
             <li key={list.id} onClick={() => captureHandler(list.id)}>
               {list.title}
+              {importModal && list.id === listIndex ? (
+                <div className="import-modal">
+                  <ul>
+                    {data.map((arr, index) => (
+                      <li
+                        key={arr.id}
+                        onClick={(e) => {
+                          dataClickHandler(arr.id);
+                        }}
+                      >
+                        {arr.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </li>
           ))}
         </ul>
