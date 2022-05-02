@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 
 import {
   CircularInput,
@@ -10,7 +10,8 @@ import {
 import "../style/ToolBox.scss";
 
 const ToolBox = () => {
-  const knobList = [
+  const knobCount = useRef();
+  const [list, setList] = useState([
     {
       id: 1,
       value: 0.3,
@@ -41,20 +42,28 @@ const ToolBox = () => {
       value: 0.3,
       title: "Curved",
     },
-  ];
+  ]);
 
   const knobHandler = (e, id) => {
-    const valueList = knobList;
-    console.log(e);
-    valueList[id].value = e;
-    console.log(valueList);
+    setList(
+      list.map((list) => (list.id === id ? { ...list, value: e } : list))
+    );
+    knobCount.current.value = list[id].value;
+  };
+
+  const changeKnob = (e, id) => {
+    setList(
+      list.map((list) =>
+        list.id === id ? { ...list, value: e.target.value / 100 } : list
+      )
+    );
   };
 
   return (
     <div className="toolbox-wrap">
       <div className="contents-wrap">
         <div className="content knob-wrap">
-          {knobList.map((knob) => (
+          {list.map((knob) => (
             <div key={knob.id}>
               <div className="title">{knob.title}</div>
               <div className="knob">
@@ -67,7 +76,17 @@ const ToolBox = () => {
                 </CircularInput>
               </div>
 
-              <p className="knob-value">{knob.value * 100} %</p>
+              <div className="knob-value">
+                <input
+                  ref={knobCount}
+                  type="number"
+                  name={`listNum${knob.id}`}
+                  id={`listNum${knob.id}`}
+                  defaultValue={Math.floor(knob.value * 100)}
+                  onChange={(e) => changeKnob(e, knob.id)}
+                />
+                %
+              </div>
             </div>
           ))}
         </div>

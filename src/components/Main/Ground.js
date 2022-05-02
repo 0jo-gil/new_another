@@ -13,9 +13,11 @@ import { BiExport, BiImport } from "react-icons/bi";
 import { AiOutlineCamera, AiOutlinePlus } from "react-icons/ai";
 import "../../style/Ground.scss";
 import html2canvas from "html2canvas";
+import * as PANOLENS from "panolens/build/panolens";
 
 const Space = ({ setObject }) => {
   const space = useRef();
+  const canvasBg = useRef();
 
   useEffect(() => {
     let scene,
@@ -138,6 +140,13 @@ const Space = ({ setObject }) => {
         });
         setObject(object);
 
+        const panorama = new PANOLENS.ImagePanorama("./models/texture.jpeg");
+        const viewer = new PANOLENS.Viewer({
+          container: canvasBg.current,
+          controlBar: false,
+        });
+        viewer.add(panorama);
+
         // document.querySelector(".captureBtn").addEventListener("click", (e) => {
 
         // });
@@ -184,15 +193,15 @@ const Space = ({ setObject }) => {
     // loadBackground();
     animation();
 
-    group = scene.children.filter((type) => type.type === "Group");
-
     controls = new OrbitControls(camera, spaceEl);
   }, []);
   return (
-    <div
-      style={{ width: "100%", height: "100%", backgroundColor: "none" }}
-      ref={space}
-    ></div>
+    <div className="canvas-bg" ref={canvasBg}>
+      <div
+        style={{ width: "100%", height: "100%", backgroundColor: "none" }}
+        ref={space}
+      ></div>
+    </div>
   );
 };
 
@@ -233,7 +242,7 @@ const Ground = () => {
   };
 
   const cameraRotation = () => {
-    if (rotateNum >= 0.11) {
+    if (rotateNum >= 0.065) {
       cancelAnimationFrame(rot);
       rotateNum = 0;
     } else {
@@ -257,7 +266,7 @@ const Ground = () => {
           captureNum = 0;
           clearInterval(captureAni);
         }
-      });
+      }, 500);
     }
   };
   return (
