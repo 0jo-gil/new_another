@@ -101,18 +101,19 @@
         li {
           margin: 10px 0;
           position: relative;
+          font-size: 14px;
 
-          input{
+          input {
             position: absolute;
             top: 0;
             left: 0;
             opacity: 0;
             cursor: pointer;
-
           }
 
-          label{
+          label {
             cursor: pointer;
+            font-size: 14px;
           }
         }
       }

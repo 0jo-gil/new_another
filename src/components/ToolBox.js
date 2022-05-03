@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Space } from "./Main/Ground";
 
 import {
   CircularInput,
@@ -9,7 +10,7 @@ import {
 
 import "../style/ToolBox.scss";
 
-const ToolBox = () => {
+const ToolBox = ({ canvasEl, playEl }) => {
   const knobCount = useRef();
   const [list, setList] = useState([
     {
@@ -90,7 +91,35 @@ const ToolBox = () => {
             </div>
           ))}
         </div>
-        <div className="content console-wrap"></div>
+        <div className="content console-wrap">
+          <p>Finder</p>
+          {/* <ul>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+            <li ref={canvasEl}>
+              <Space playEl={playEl} />
+            </li>
+          </ul> */}
+        </div>
         <div className="content range-wrap">
           <div>
             <div className="title">Transform</div>
@@ -104,7 +133,7 @@ const ToolBox = () => {
                       type="number"
                       name="positionX"
                       id="positionX"
-                      value="1"
+                      // value="1"
                     />
                   </div>
                   <div>
@@ -113,7 +142,7 @@ const ToolBox = () => {
                       type="number"
                       name="positionY"
                       id="positionY"
-                      value="6.3"
+                      // value="6.3"
                     />
                   </div>
                   <div>
@@ -122,7 +151,7 @@ const ToolBox = () => {
                       type="number"
                       name="positionZ"
                       id="positionZ"
-                      value="2.2"
+                      // value="2.2"
                     />
                   </div>
                 </div>
@@ -138,7 +167,7 @@ const ToolBox = () => {
                       type="number"
                       name="rotationX"
                       id="rotationX"
-                      value="1"
+                      // value="1"
                     />
                   </div>
                   <div>
@@ -147,7 +176,7 @@ const ToolBox = () => {
                       type="number"
                       name="rotationY"
                       id="rotationY"
-                      value="1"
+                      // value="1"
                     />
                   </div>
                   <div>
@@ -156,7 +185,7 @@ const ToolBox = () => {
                       type="number"
                       name="rotationZ"
                       id="rotationZ"
-                      value="1"
+                      // value="1"
                     />
                   </div>
                 </div>
@@ -172,16 +201,26 @@ const ToolBox = () => {
                       type="number"
                       name="scaleX"
                       id="scaleX"
-                      value="1.3"
+                      // value="1.3"
                     />
                   </div>
                   <div>
                     <label htmlFor="scaleX">Y</label>{" "}
-                    <input type="number" name="scaleY" id="scaleY" value="2" />
+                    <input
+                      type="number"
+                      name="scaleY"
+                      id="scaleY"
+                      // value="2"
+                    />
                   </div>
                   <div>
                     <label htmlFor="scaleX">Z</label>{" "}
-                    <input type="number" name="scaleZ" id="scaleZ" value="2" />
+                    <input
+                      type="number"
+                      name="scaleZ"
+                      id="scaleZ"
+                      // value="2"
+                    />
                   </div>
                 </div>
               </div>

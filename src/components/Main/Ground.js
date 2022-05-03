@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { DragControls } from "three/examples/jsm/controls/DragControls";
 import { data } from "../../data/data";
@@ -11,17 +12,23 @@ import { MdOutlineSplitscreen } from "react-icons/md";
 import { BsArrowsFullscreen, BsRecord } from "react-icons/bs";
 import { BiExport, BiImport } from "react-icons/bi";
 import { AiOutlineCamera, AiOutlinePlus } from "react-icons/ai";
+
+import { ImDownload, ImUpload } from "react-icons/im";
 import "../../style/Ground.scss";
 import html2canvas from "html2canvas";
 import * as PANOLENS from "panolens/build/panolens";
 
-const Space = ({ setObject }) => {
+let viewer;
+
+export const Space = ({ setObject, playEl, setModal }) => {
   const space = useRef();
   const canvasBg = useRef();
+  let [objIndex, setObjIndex] = useState(0);
 
   useEffect(() => {
     let scene,
       camera,
+      orthographicCamera,
       renderer,
       controls,
       model,
@@ -39,12 +46,22 @@ const Space = ({ setObject }) => {
     let clock = new THREE.Clock();
     let radian = Math.PI / 180;
 
+    let playElement = playEl.current;
+    console.log(playElement);
+
+    spaceEl.innerHTML = "";
+
     const sceneSetup = () => {
       const width = spaceEl.clientWidth;
       const height = spaceEl.clientHeight;
 
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+
+      const vec = new THREE.Vector3();
+      camera.getWorldDirection(vec);
+      vec.y = 0;
+      vec.add(0);
 
       renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -86,7 +103,7 @@ const Space = ({ setObject }) => {
         centerBox.z + offsetZ
       );
 
-      const halfSizeModel = sizeBox * 0.5;
+      const halfSizeModel = sizeBox * 1;
       const halfFov = THREE.Math.degToRad(camera.fov * 0.5);
       const distance = halfSizeModel / Math.tan(halfFov);
 
@@ -100,8 +117,9 @@ const Space = ({ setObject }) => {
       camera.far = sizeBox * 100;
 
       camera.updateProjectionMatrix();
+      camera.lookAt(0, 0, 0);
 
-      camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
+      // camera.lookAt(centerBox.x, centerBox.y, centerBox.z);
 
       controls.target.set(centerBox.x, centerBox.y, centerBox.z);
     };
@@ -109,14 +127,7 @@ const Space = ({ setObject }) => {
     const loadModel = () => {
       const fbxloader = new FBXLoader();
 
-      // const panorama = new PANOLENS.ImagePanorama("./models/texture.jpeg");
-
-      // const viewer = new PANOLENS.Viewer({
-      //   container: document.querySelector(".card > div"),
-      // });
-      // console.log(viewer);
-      // viewer.add(panorama);
-      fbxloader.load(data[0].fbx, (object) => {
+      fbxloader.load(data[objIndex].fbx, (object) => {
         mixer = new THREE.AnimationMixer(object);
 
         object.rotateY(radian * 20);
@@ -141,11 +152,21 @@ const Space = ({ setObject }) => {
         setObject(object);
 
         const panorama = new PANOLENS.ImagePanorama("./models/texture.jpeg");
-        const viewer = new PANOLENS.Viewer({
+        viewer = new PANOLENS.Viewer({
           container: canvasBg.current,
           controlBar: false,
+          autoRotate: true,
+          autoRotateSpeed: -3,
         });
-        viewer.add(panorama);
+        // viewer.add(panorama);
+
+        playElement.addEventListener("click", () => {
+          setModal(false);
+          if (data[objIndex].animation) {
+            action = mixer.clipAction(object.animations[0]);
+            action.play();
+          }
+        });
 
         // document.querySelector(".captureBtn").addEventListener("click", (e) => {
 
@@ -175,33 +196,72 @@ const Space = ({ setObject }) => {
       scene.add(lights[1]);
       scene.add(lights[2]);
     };
+    let angle = 0,
+      radius = 1;
+    sceneSetup();
+    addLights();
+    loadModel();
+    controls = new OrbitControls(camera, spaceEl);
+    // controls = new TrackballControls(camera, spaceEl);
+
     const update = () => {
       time *= 0.001;
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
+
+      // camera.position.x = Math.cos(angle) * radius;
+      // camera.position.z = Math.sin(angle) * radius;
+      // angle += new THREE.Math.degToRad(20) * delta;
     };
 
+    let x = 0;
+
+    const render = () => {
+      let time = Date.now() * 0.0005;
+      x += 1;
+      console.log(x);
+      // camera.position.x = Math.sin(time * 10) * x;
+      // camera.position.y = Math.cos(time * 7) * 10;
+
+      // camera.rotation.y += 0.05;
+    };
     const animation = () => {
-      // update();
+      update();
+      render();
+      // camera.lookAt(point);
+      controls.update();
+      controls.target;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = -3;
+
+      camera.updateProjectionMatrix();
       renderer.render(scene, camera);
       window.requestAnimationFrame(animation);
     };
 
-    sceneSetup();
-    addLights();
-    loadModel();
     // loadBackground();
     animation();
+  }, [objIndex]);
 
-    controls = new OrbitControls(camera, spaceEl);
-  }, []);
   return (
-    <div className="canvas-bg" ref={canvasBg}>
-      <div
-        style={{ width: "100%", height: "100%", backgroundColor: "none" }}
-        ref={space}
-      ></div>
-    </div>
+    <>
+      <div className="canvas-bg" ref={canvasBg}>
+        <div
+          style={{ width: "100%", height: "100%", backgroundColor: "none" }}
+          ref={space}
+        ></div>
+      </div>
+      <div className="canvas-btn-wrap">
+        <ul>
+          <li onClick={() => setObjIndex(0)}>
+            <ImDownload />
+          </li>
+          <li onClick={() => setObjIndex(1)}>
+            <ImUpload />
+          </li>
+        </ul>
+      </div>
+    </>
   );
 };
 
@@ -209,8 +269,8 @@ const Ground = () => {
   const [object, setObject] = useState(null);
   const [importModal, setImportModal] = useState(false);
   // const [isData, setData] = useState(data);
-  const [dataIndex, setDataIndex] = useState(0);
   const [listIndex, setListIndex] = useState(0);
+  const playEl = useRef();
   const sceneBtn = [
     [
       { id: 0, title: <GrSplit /> },
@@ -231,8 +291,9 @@ const Ground = () => {
 
   let captureNum = 0;
   let rotateNum = 0;
+  let panoramaNum = 0;
   let captureAni;
-  let rot;
+  let rot, panoramaRot;
 
   const saveAs = (uri, name) => {
     let link = document.createElement("a");
@@ -254,6 +315,16 @@ const Ground = () => {
       object.rotateY(rotateNum);
 
       rot = requestAnimationFrame(cameraRotation);
+    }
+
+    if (panoramaNum >= 1) {
+      cancelAnimationFrame(panoramaNum);
+      panoramaNum = 0;
+    } else {
+      panoramaNum += 0.01;
+      viewer.addUpdateCallback(function () {
+        viewer.panorama.rotation.y = panoramaNum * 2;
+      });
     }
   };
 
@@ -277,10 +348,13 @@ const Ground = () => {
     }
   };
 
-  const dataClickHandler = (id) => {
-    setDataIndex(id);
-    console.log(dataIndex);
+  const [isValue, setValue] = useState(0);
+
+  const frameHandler = (e) => {
+    let value = e.target.value;
+    setValue(value);
   };
+
   return (
     <div className="ground-wrap">
       <div className="btn-wrap">
@@ -292,8 +366,27 @@ const Ground = () => {
         <ul className="middle-menu">
           <li>0:01:025</li>
           <li>0:21:131</li>
-          <li>
+          <li onClick={() => setImportModal(true)}>
             <BsRecord />
+            <div
+              className="frame-modal"
+              style={
+                importModal === true
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+            >
+              <input
+                type="range"
+                name="frame"
+                id="frame"
+                defaultValue={0}
+                max={60}
+                onChange={frameHandler}
+              />
+              <label htmlFor="frame">fps. {isValue}</label>
+              <button ref={playEl}>PLAY</button>
+            </div>
           </li>
           <li>
             <AiOutlinePlus />
@@ -303,28 +396,16 @@ const Ground = () => {
           {sceneBtn[1].map((list, index) => (
             <li key={list.id} onClick={() => captureHandler(list.id)}>
               {list.title}
-              {importModal && list.id === listIndex ? (
-                <div className="import-modal">
-                  <ul>
-                    {data.map((arr, index) => (
-                      <li
-                        key={arr.id}
-                        onClick={(e) => {
-                          dataClickHandler(arr.id);
-                        }}
-                      >
-                        {arr.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
             </li>
           ))}
         </ul>
       </div>
       <div className="space-wrap" ref={canvasEl}>
-        <Space setObject={setObject} />
+        <Space
+          setObject={setObject}
+          playEl={playEl}
+          setModal={setImportModal}
+        />
       </div>
     </div>
   );
