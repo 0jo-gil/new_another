@@ -226,8 +226,8 @@ export const Space = ({ setObject, playEl, setModal }) => {
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
 
-      camera.position.x = 720 * Math.sin(t / (Math.PI * 5)) + 0;
-      camera.position.y = 720 * Math.cos(t / (Math.PI * 5)) + 0;
+      camera.position.x = 360 * Math.cos(t / (Math.PI * 2)) + 0;
+      camera.position.y = 720 * Math.cos(t / (Math.PI * 2)) + 0;
 
       camera.position.z = 360 * Math.sin(t / (Math.PI * 2)) + 0;
       // camera.position.z = 20 * Math.cos(t) + 300;
