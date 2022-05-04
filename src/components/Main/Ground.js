@@ -204,10 +204,18 @@ export const Space = ({ setObject, playEl, setModal }) => {
     controls = new OrbitControls(camera, spaceEl);
     // controls = new TrackballControls(camera, spaceEl);
 
+    let t = 0;
     const update = () => {
       time *= 0.001;
+      t += 0.05;
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
+
+      camera.position.x = 720 * Math.sin(t / (Math.PI * 5)) + 0;
+      camera.position.y = 720 * Math.cos(t / (Math.PI * 5)) + 0;
+      // camera.position.z = 20 * Math.cos(t) + 300;
+      // camera.position.z = 20 * Math.sin(t) + 300;
+      // camera.position
 
       // camera.position.x = Math.cos(angle) * radius;
       // camera.position.z = Math.sin(angle) * radius;
@@ -219,7 +227,8 @@ export const Space = ({ setObject, playEl, setModal }) => {
     const render = () => {
       let time = Date.now() * 0.0005;
       x += 1;
-      console.log(x);
+      // console.log(model);
+      // camera.position.x = ;
       // camera.position.x = Math.sin(time * 10) * x;
       // camera.position.y = Math.cos(time * 7) * 10;
 
@@ -230,9 +239,9 @@ export const Space = ({ setObject, playEl, setModal }) => {
       render();
       // camera.lookAt(point);
       controls.update();
-      controls.target;
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = -3;
+      // controls.target;
+      // controls.autoRotate = true;
+      // controls.autoRotateSpeed = -3;
 
       camera.updateProjectionMatrix();
       renderer.render(scene, camera);
