@@ -168,6 +168,19 @@ export const Space = ({ setObject, playEl, setModal }) => {
           }
         });
 
+        const geometry = new THREE.PlaneGeometry(
+          window.innerWidth / 2,
+          window.innerWidth / 2
+        );
+        const material = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+        });
+        const plane = new THREE.Mesh(geometry, material);
+        plane.rotation.set(radian * 90, 0, 0);
+        scene.add(plane);
+
+        console.log(plane);
         // document.querySelector(".captureBtn").addEventListener("click", (e) => {
 
         // });
@@ -179,6 +192,8 @@ export const Space = ({ setObject, playEl, setModal }) => {
         // }
       });
     };
+
+    const planeLoad = () => {};
     const addLights = () => {
       const lights = [];
 
