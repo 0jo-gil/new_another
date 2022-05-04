@@ -344,7 +344,7 @@ const Ground = () => {
       captureAni = setInterval(() => {
         if (captureNum < 6) {
           captureNum++;
-          cameraRotation();
+          // cameraRotation();
           html2canvas(canvasEl.current).then((canvas) => {
             saveAs(canvas.toDataURL("image/png"), "test.png");
           });
