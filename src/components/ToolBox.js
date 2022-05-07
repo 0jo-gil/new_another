@@ -83,6 +83,7 @@ const ToolBox = ({ canvasEl, playEl }) => {
                   type="number"
                   name={`listNum${knob.id}`}
                   id={`listNum${knob.id}`}
+                  height="100%"
                   defaultValue={Math.floor(knob.value * 100)}
                   onChange={(e) => changeKnob(e, knob.id)}
                 />
@@ -93,8 +94,39 @@ const ToolBox = ({ canvasEl, playEl }) => {
         </div>
         <div className="content console-wrap">
           <p>Finder</p>
-          {/* <ul>
+          <ul>
+            <li>
+              <img src="./img/1.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/2.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/3.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/4.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/5.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/6.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/7.png" alt="" />
+            </li>
+            <li>
+              <img src="./img/8.png" alt="" />
+            </li>
+            {/* <li ref={canvasEl}>
+              <Space playEl={playEl} canvasEl={canvasEl} />
+            </li>
             <li ref={canvasEl}>
+              <Space playEl={playEl} canvasEl={canvasEl} />
+            </li> */}
+
+            {/* <li ref={canvasEl}>
               <Space playEl={playEl} />
             </li>
             <li ref={canvasEl}>
@@ -111,14 +143,8 @@ const ToolBox = ({ canvasEl, playEl }) => {
             </li>
             <li ref={canvasEl}>
               <Space playEl={playEl} />
-            </li>
-            <li ref={canvasEl}>
-              <Space playEl={playEl} />
-            </li>
-            <li ref={canvasEl}>
-              <Space playEl={playEl} />
-            </li>
-          </ul> */}
+            </li>  */}
+          </ul>
         </div>
         <div className="content range-wrap">
           <div>

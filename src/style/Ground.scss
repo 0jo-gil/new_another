@@ -107,18 +107,46 @@
     height: calc(100% - 50px);
     position: relative;
     z-index: 5;
+
+    &:hover {
+      .canvas-btn-wrap {
+        right: 10px;
+        transition: 0.5s;
+      }
+    }
   }
 
   .canvas-btn-wrap {
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: -200%;
     z-index: 100;
     transform: translateY(-50%);
 
     li {
       background: #aaa;
       padding: 5px;
+      position: relative;
+      cursor: pointer;
+
+      span {
+        display: block;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      // &::after {
+      //   content: "";
+      //   display: block;
+      //   position: absolute;
+      //   top: 50%;
+      //   right: 0;
+      //   transform: translateY(-50%);
+      //   width: 5px;
+      //   height: 5px;
+      //   border: 1px solid #000;
+      //   border-radius: 50%;
+      // }
 
       &:not(:last-of-type) {
         margin-bottom: 5px;

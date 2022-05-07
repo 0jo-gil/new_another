@@ -8,7 +8,7 @@ import { DragControls } from "three/examples/jsm/controls/DragControls";
 import { data } from "../../data/data";
 
 import { GrSplit, GrSplits } from "react-icons/gr";
-import { MdOutlineSplitscreen } from "react-icons/md";
+import { MdOutlineSplitscreen, MdOutlinePhotoCameraBack } from "react-icons/md";
 import { BsArrowsFullscreen, BsRecord } from "react-icons/bs";
 import { BiExport, BiImport } from "react-icons/bi";
 import { AiOutlineCamera, AiOutlinePlus } from "react-icons/ai";
@@ -20,25 +20,26 @@ import * as PANOLENS from "panolens/build/panolens";
 
 let viewer;
 
+let scene,
+  camera,
+  orthographicCamera,
+  renderer,
+  controls,
+  model,
+  group,
+  mixer,
+  action,
+  rot,
+  controls2,
+  panorama,
+  captureAni;
+
 export const Space = ({ setObject, playEl, setModal }) => {
   const space = useRef();
   const canvasBg = useRef();
   let [objIndex, setObjIndex] = useState(0);
 
   useEffect(() => {
-    let scene,
-      camera,
-      orthographicCamera,
-      renderer,
-      controls,
-      model,
-      group,
-      mixer,
-      action,
-      rot,
-      controls2,
-      captureAni;
-
     let rotateNum = 0;
     let objects = [];
     let spaceEl = space.current;
@@ -47,7 +48,6 @@ export const Space = ({ setObject, playEl, setModal }) => {
     let radian = Math.PI / 180;
 
     let playElement = playEl.current;
-    console.log(playElement);
 
     spaceEl.innerHTML = "";
 
@@ -149,16 +149,15 @@ export const Space = ({ setObject, playEl, setModal }) => {
         controls2.addEventListener("dragend", function () {
           controls.enabled = true;
         });
-        setObject(object);
+        // setObject(object);
 
-        const panorama = new PANOLENS.ImagePanorama("./models/texture.jpeg");
+        panorama = new PANOLENS.ImagePanorama("./models/texture.jpeg");
         viewer = new PANOLENS.Viewer({
           container: canvasBg.current,
           controlBar: false,
-          autoRotate: true,
-          autoRotateSpeed: -3,
+          // autoRotate: true,
+          // autoRotateSpeed: -3,
         });
-        // viewer.add(panorama);
 
         playElement.addEventListener("click", () => {
           setModal(false);
@@ -169,18 +168,17 @@ export const Space = ({ setObject, playEl, setModal }) => {
         });
 
         const geometry = new THREE.PlaneGeometry(
-          window.innerWidth / 2,
-          window.innerWidth / 2
+          window.innerWidth / 4,
+          window.innerWidth / 4
         );
         const material = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+          color: 0x909090,
           side: THREE.DoubleSide,
         });
         const plane = new THREE.Mesh(geometry, material);
         plane.rotation.set(radian * 90, 0, 0);
         scene.add(plane);
 
-        console.log(plane);
         // document.querySelector(".captureBtn").addEventListener("click", (e) => {
 
         // });
@@ -193,7 +191,6 @@ export const Space = ({ setObject, playEl, setModal }) => {
       });
     };
 
-    const planeLoad = () => {};
     const addLights = () => {
       const lights = [];
 
@@ -219,24 +216,10 @@ export const Space = ({ setObject, playEl, setModal }) => {
     controls = new OrbitControls(camera, spaceEl);
     // controls = new TrackballControls(camera, spaceEl);
 
-    let t = 0;
     const update = () => {
       time *= 0.001;
-      t += 0.1;
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
-
-      camera.position.x = 360 * Math.cos(t / (Math.PI * 2)) + 0;
-      camera.position.y = 360 * Math.cos(t / (Math.PI * 2)) + 0;
-
-      camera.position.z = 360 * Math.sin(t / (Math.PI * 2)) + 0;
-      // camera.position.z = 20 * Math.cos(t) + 300;
-      // camera.position.z = 20 * Math.sin(t) + 300;
-      // camera.position
-
-      // camera.position.x = Math.cos(angle) * radius;
-      // camera.position.z = Math.sin(angle) * radius;
-      // angle += new THREE.Math.degToRad(20) * delta;
     };
 
     let x = 0;
@@ -271,19 +254,22 @@ export const Space = ({ setObject, playEl, setModal }) => {
 
   return (
     <>
-      <div className="canvas-bg" ref={canvasBg}>
-        <div
-          style={{ width: "100%", height: "100%", backgroundColor: "none" }}
-          ref={space}
-        ></div>
+      <div
+        className="canvas-bg"
+        ref={canvasBg}
+        style={{ background: "#707070" }}
+      >
+        <div style={{ width: "100%", height: "100%" }} ref={space}></div>
       </div>
       <div className="canvas-btn-wrap">
         <ul>
           <li onClick={() => setObjIndex(0)}>
-            <ImDownload />
+            <span>CAR</span>
+            {/* <BiImport /> */}
           </li>
           <li onClick={() => setObjIndex(1)}>
-            <ImUpload />
+            <span>HUMAN</span>
+            {/* <BiExport /> */}
           </li>
         </ul>
       </div>
@@ -300,7 +286,7 @@ const Ground = () => {
   const sceneBtn = [
     [
       { id: 0, title: <GrSplit /> },
-      { id: 1, title: <GrSplits /> },
+      { id: 1, title: <MdOutlinePhotoCameraBack /> },
       { id: 2, title: "Link" },
       { id: 3, title: <MdOutlineSplitscreen /> },
       { id: 4, title: <BsArrowsFullscreen /> },
@@ -354,11 +340,29 @@ const Ground = () => {
     }
   };
 
+  let t = 0;
+
+  const cameraAnimation = () => {
+    t += 0.1;
+    camera.position.x = 180 * Math.cos(t / (Math.PI * 2)) + 0;
+    camera.position.y = 180 * Math.cos(t / (Math.PI * 2)) + 0;
+    camera.position.z = 180 * Math.sin(t / (Math.PI * 2)) + 0;
+    if (t > 36) {
+      t = 0;
+      window.cancelAnimationFrame(cameraAnimation);
+    } else {
+      window.requestAnimationFrame(cameraAnimation);
+    }
+  };
+
   const captureHandler = (id) => {
+    console.log(camera);
     if (id === 0) {
+      cameraAnimation();
       captureAni = setInterval(() => {
-        if (captureNum < 6) {
+        if (captureNum < 12) {
           captureNum++;
+
           // cameraRotation();
           html2canvas(canvasEl.current).then((canvas) => {
             saveAs(canvas.toDataURL("image/png"), "test.png");
@@ -373,6 +377,18 @@ const Ground = () => {
       setListIndex(id);
     }
   };
+  const [bgActive, setBgActive] = useState(false);
+  const bgAdd = (id) => {
+    console.log("hi");
+    if (id === 1 || bgActive) {
+      setBgActive(true);
+      viewer.add(panorama);
+    } else {
+      setBgActive(false);
+      viewer.remove(panorama);
+    }
+    console.log(viewer);
+  };
 
   const [isValue, setValue] = useState(0);
 
@@ -386,13 +402,15 @@ const Ground = () => {
       <div className="btn-wrap">
         <ul className="left-menu">
           {sceneBtn[0].map((list, index) => (
-            <li key={list.id}>{list.title}</li>
+            <li key={list.id} onClick={() => bgAdd(list.id)}>
+              {list.title}
+            </li>
           ))}
         </ul>
         <ul className="middle-menu">
           <li>0:01:025</li>
           <li>0:21:131</li>
-          <li onClick={() => setImportModal(true)}>
+          <li onClick={() => setImportModal(!importModal)}>
             <BsRecord />
             <div
               className="frame-modal"
@@ -428,7 +446,7 @@ const Ground = () => {
       </div>
       <div className="space-wrap" ref={canvasEl}>
         <Space
-          setObject={setObject}
+          // setObject={setObject}
           playEl={playEl}
           setModal={setImportModal}
         />

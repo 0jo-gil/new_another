@@ -30,6 +30,7 @@ const Ability = () => {
       title: "Library",
       input: false,
       sub: true,
+      list: ["Car", "Human"],
     },
   ];
   const [show, setShow] = useState(false);
